@@ -429,7 +429,6 @@
         renderData(data);
       })
       .catch((err) => {
-        console.log(err);
       });
 
     renderCart();
@@ -471,11 +470,9 @@
           axios
             .post(`${baseUrl}/api/livejs/v1/customer/${apiPath}/carts`, obj)
             .then(function (res) {
-              console.log(res);
               renderCart();
             })
             .catch((err) => {
-              console.log(err);
             });
         });
       });
@@ -546,11 +543,9 @@
                   `${baseUrl}/api/livejs/v1/customer/${apiPath}/carts/${productId}`
                 )
                 .then(function (res) {
-                  console.log(res);
                   renderCart();
                 })
                 .catch((err) => {
-                  console.log(err);
                 });
             });
           });
@@ -560,7 +555,6 @@
       e.preventDefault();
       const formData = new FormData(orderForm);
       const dataObj = Object.fromEntries(formData.entries());
-      console.log(dataObj);
 
       const orderObj = {
         data: {
@@ -576,10 +570,8 @@
       axios
         .post(`${baseUrl}/api/livejs/v1/customer/${apiPath}/orders`, orderObj)
         .then(function (res) {
-          console.log(res);
         })
         .catch((err) => {
-          console.log(err);
         });
     });
 
