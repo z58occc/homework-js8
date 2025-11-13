@@ -3,7 +3,27 @@ const baseUrl = "https://livejs-api.hexschool.io";
 const apiPath = "z58occc";
 const token = "kDx1wSSRDjaVZsyfBiWHwk1tIuv2";
 const orderPageTable = document.querySelector(".orderPage-table");
+const discardAllBtn = document.querySelector(".discardAllBtn");
+
 renderOrder();
+
+//刪除全部訂單
+discardAllBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  axios
+    .delete(`${baseUrl}/api/livejs/v1/admin/${apiPath}/orders`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then(function (res) {
+      console.log(res);
+      renderOrder();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 function renderOrder() {
   axios
@@ -81,7 +101,7 @@ function renderOrder() {
           </td>
           <td>${time}</td>
           <td class="orderStatus">
-            <a href="#">${orders[i].paid}</a>
+            <a href="#">未處理</a>
           </td>
           <td>
             <input id=${orders[i].id} type="button" class="delSingleOrder-Btn" value="刪除">
