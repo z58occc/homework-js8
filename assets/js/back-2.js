@@ -72,15 +72,15 @@ function renderOrder() {
           type: "pie",
           columns: final,
           colors: {
-            "Charles 雙人床架": "rgba(218, 203, 255, 1)",
-            "Charles 系列儲物組合": "rgba(157, 127, 234, 1)",
-            "Antony 遮光窗簾": "rgba(84, 52, 167, 1)",
+            [final[0][0]]: "rgba(218, 203, 255, 1)",
+            [final[1][0]]: "rgba(157, 127, 234, 1)",
+            [final[2][0]]: "rgba(84, 52, 167, 1)",
             其他: "rgba(48, 30, 95, 1)",
           },
         },
       });
 
-      orderPageTable.innerHTML="";
+      orderPageTable.innerHTML = "";
       for (let i = 0; i < orders.length; i++) {
         const time = moment.unix(orders[i].createdAt).format("YYYY-MM-DD");
         const productList = orders[i].products
