@@ -16,11 +16,9 @@ discardAllBtn.addEventListener("click", function (e) {
       },
     })
     .then(function (res) {
-      console.log(res);
       initOrder();
     })
     .catch((err) => {
-      console.log(err);
     });
 });
 
@@ -114,18 +112,15 @@ function initOrder() {
                 }
               )
               .then(function (res) {
-                console.log(res);
                 initOrder();
               })
               .catch((err) => {
-                console.log(err);
               });
           });
         });
       }
     })
     .catch((err) => {
-      console.log(err);
     });
 }
 

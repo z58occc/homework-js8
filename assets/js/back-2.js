@@ -17,11 +17,9 @@ discardAllBtn.addEventListener("click", function (e) {
       },
     })
     .then(function (res) {
-      console.log(res);
       renderOrder();
     })
     .catch((err) => {
-      console.log(err);
     });
 });
 
@@ -63,7 +61,6 @@ function renderOrder() {
       }
       const final = newArr.slice(0, 3);
       final.push(["其他", sum]);
-      console.log(final);
 
       // C3.js
       let chart = c3.generate({
@@ -116,7 +113,6 @@ function renderOrder() {
       delSingleOrderBtn.forEach((el) => {
         el.addEventListener("click", function (e) {
           const id = e.target.id;
-          console.log(id);
 
           axios
             .delete(`${baseUrl}/api/livejs/v1/admin/${apiPath}/orders/${id}`, {
@@ -125,17 +121,14 @@ function renderOrder() {
               },
             })
             .then(function (res) {
-              console.log(res);
               renderOrder();
             })
             .catch((err) => {
-              console.log(err);
             });
         });
       });
     })
     .catch((err) => {
-      console.log(err);
     });
 }
 orderPageTable.innerHTML = `<thead>
