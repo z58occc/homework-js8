@@ -18,8 +18,7 @@ discardAllBtn.addEventListener("click", function (e) {
     .then(function (res) {
       initOrder();
     })
-    .catch((err) => {
-    });
+    .catch((err) => {});
 });
 
 function initOrder() {
@@ -32,34 +31,78 @@ function initOrder() {
     })
     .then(function (res) {
       let orders = res.data.orders;
-      let obj = {};
+      let objCategory = {};
       for (let i = 0; i < orders.length; i++) {
         for (let j = 0; j < orders[i].products.length; j++) {
           let category = orders[i].products[j].category;
-          if (!obj[category]) {
-            obj[category] = 1;
+          if (!objCategory[category]) {
+            objCategory[category] = 1;
           } else {
-            obj[category] += 1;
+            objCategory[category] += 1;
           }
         }
       }
-      let keys = Object.keys(obj);
-      let values = Object.values(obj);
-      let arr = [];
-      for (let i = 0; i < keys.length; i++) {
-        arr[i] = [keys[i], values[i]];
+      let keysCategory = Object.keys(objCategory);
+      let valuesCategory = Object.values(objCategory);
+      let arrCategory = [];
+      for (let i = 0; i < keysCategory.length; i++) {
+        arrCategory[i] = [keysCategory[i], valuesCategory[i]];
       }
 
       // C3.js
-      let chart = c3.generate({
-        bindto: "#chart", // HTML 元素綁定
+      let chart1 = c3.generate({
+        bindto: "#chart-1", // HTML 元素綁定
         data: {
           type: "pie",
-          columns: arr,
+          columns: arrCategory,
           colors: {
             床架: "rgba(218, 203, 255, 1)",
             收納: "rgba(157, 127, 234, 1)",
             窗簾: "rgba(84, 52, 167, 1)",
+          },
+        },
+      });
+
+      let objTitle = {};
+      for (let i = 0; i < orders.length; i++) {
+        for (let j = 0; j < orders[i].products.length; j++) {
+          let title = orders[i].products[j].title;
+          if (!objTitle[title]) {
+            objTitle[title] = 1;
+          } else {
+            objTitle[title] += 1;
+          }
+        }
+      }
+      let keysTitle = Object.keys(objTitle);
+      let valuesTitle = Object.values(objTitle);
+      let arrTitle = [];
+      for (let i = 0; i < keysTitle.length; i++) {
+        arrTitle[i] = [keysTitle[i], valuesTitle[i]];
+      }
+      const newArr = arrTitle.sort(function (a, b) {
+        return b[1] - a[1];
+      });
+
+      const others = newArr.splice(0, 3);
+      let sum = 0;
+      for (let i = 0; i < others.length; i++) {
+        sum += others[i][1];
+      }
+      const final = newArr.slice(0, 3);
+      final.push(["其他", sum]);
+
+      // C3.js
+      let chart2 = c3.generate({
+        bindto: "#chart-2", // HTML 元素綁定
+        data: {
+          type: "pie",
+          columns: final,
+          colors: {
+            [final[0][0]]: "rgba(218, 203, 255, 1)",
+            [final[1][0]]: "rgba(157, 127, 234, 1)",
+            [final[2][0]]: "rgba(84, 52, 167, 1)",
+            其他: "rgba(48, 30, 95, 1)",
           },
         },
       });
@@ -86,10 +129,16 @@ function initOrder() {
           </td>
           <td>${time}</td>
           <td class="orderStatus">
-            <a href="#">未處理</a>
+            <a class="putBtn" data-paid=${orders[i].paid} data-id=${
+          orders[i].id
+        } href="#">
+            ${orders[i].paid ? "已處理" : "未處理"}
+            </a>
           </td>
           <td>
-            <input id=${orders[i].id} type="button" class="delSingleOrder-Btn" value="刪除">
+            <input id=${
+              orders[i].id
+            } type="button" class="delSingleOrder-Btn" value="刪除">
           </td>
         </tr>
             `;
@@ -112,15 +161,52 @@ function initOrder() {
                 }
               )
               .then(function (res) {
+                alert("刪除成功");
                 initOrder();
               })
               .catch((err) => {
+                alert("刪除失敗");
+              });
+          });
+        });
+
+        // 修改訂單狀態
+        const putBtns = document.querySelectorAll(".putBtn");
+        putBtns.forEach((el) => {
+          el.addEventListener("click", function (e) {
+            e.preventDefault();
+            let id = e.target.getAttribute("data-id");
+            let hasPaid =
+              e.target.getAttribute("data-paid") === "true" ? true : false;
+
+            axios
+              .put(
+                `${baseUrl}/api/livejs/v1/admin/${apiPath}/orders`,
+                {
+                  data: {
+                    id: id,
+                    paid: !hasPaid,
+                  },
+                },
+                {
+                  headers: {
+                    Authorization: token,
+                  },
+                }
+              )
+              .then(function (res) {
+                alert("刪除成功");
+                initOrder();
+              })
+              .catch((err) => {
+                alert("刪除失敗");
               });
           });
         });
       }
     })
     .catch((err) => {
+      alert("發生錯誤");
     });
 }
 
@@ -138,3 +224,21 @@ orderPageTable.innerHTML = `
      </tr>
    </thead>
    `;
+
+//刪除全部訂單
+discardAllBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  axios
+    .delete(`${baseUrl}/api/livejs/v1/admin/${apiPath}/orders`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then(function (res) {
+      alert("刪除成功");
+      renderOrder();
+    })
+    .catch((err) => {
+      alert("刪除失敗");
+    });
+});
